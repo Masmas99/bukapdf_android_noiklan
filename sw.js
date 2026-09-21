@@ -1,4 +1,4 @@
-const CACHE_NAME = 'docuview-android-v3';
+const CACHE_NAME = 'docuview-android-v4';
 const APP_FILES_TO_CACHE = [
     './',
     'index.html',
