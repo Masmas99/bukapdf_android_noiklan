@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">DocuView</string>
-    <string name="title_activity_main">DocuView</string>
-    <string name="package_name">com.masmas99.docuview</string>
-    <string name="custom_url_scheme">com.masmas99.docuview</string>
-</resources>
