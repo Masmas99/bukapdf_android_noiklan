@@ -1,4 +1,4 @@
-const CACHE_NAME = 'docuview-android-v5';
+const CACHE_NAME = 'docuview-android-v6';
 const APP_FILES_TO_CACHE = [
     './',
     'index.html',
@@ -47,6 +47,22 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method === 'POST' && new URL(event.request.url).pathname.endsWith('/')) {
         event.respondWith(handleSharedPdf(event.request));
+        return;
+    }
+
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                    return response;
+                })
+                .catch(() => caches.match(event.request)
+                    .then((response) => response || caches.match(new URL('index.html', self.registration.scope).toString())))
+        );
         return;
     }
 
