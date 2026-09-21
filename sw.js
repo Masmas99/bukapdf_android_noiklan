@@ -45,7 +45,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    if (event.request.method === 'POST' && new URL(event.request.url).pathname.endsWith('/')) {
+    if (event.request.method === 'POST') {
         event.respondWith(handleSharedPdf(event.request));
         return;
     }
@@ -92,10 +92,11 @@ self.addEventListener('fetch', (event) => {
 
 async function handleSharedPdf(request) {
     const formData = await request.formData();
-    const pdf = formData.get('pdf') || formData.get('file') || formData.get('files');
+    const sharedFiles = [...formData.values()];
+    const pdf = sharedFiles.find((file) => file && typeof file.arrayBuffer === 'function' &&
+        (/\.pdf$/i.test(file.name || '') || file.type === 'application/pdf' || file.type === 'application/octet-stream'));
     const sharedPdfUrl = new URL('__shared_pdf__', self.registration.scope).toString();
-    const isPdf = pdf && typeof pdf.arrayBuffer === 'function' &&
-        (pdf.type === 'application/pdf' || /\.pdf$/i.test(pdf.name || ''));
+    const isPdf = Boolean(pdf);
 
     if (isPdf) {
         const cache = await caches.open(CACHE_NAME);
@@ -104,7 +105,7 @@ async function handleSharedPdf(request) {
         }));
     }
 
-    return fetch(new URL('./', request.url));
+    return Response.redirect(new URL('./index.html', request.url), 303);
 }
 
 self.addEventListener('message', (event) => {
