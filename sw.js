@@ -109,6 +109,18 @@ async function handleSharedPdf(request) {
 }
 
 self.addEventListener('message', (event) => {
+    if (event.data === 'get-shared-pdf') {
+        event.waitUntil((async () => {
+            const sharedPdfUrl = new URL('__shared_pdf__', self.registration.scope).toString();
+            const response = await caches.match(sharedPdfUrl);
+            if (!response || !event.source) return;
+
+            const buffer = await response.arrayBuffer();
+            event.source.postMessage({ type: 'shared-pdf', buffer }, [buffer]);
+        })());
+        return;
+    }
+
     if (event.data === 'clear-shared-pdf') {
         const sharedPdfUrl = new URL('__shared_pdf__', self.registration.scope).toString();
         caches.open(CACHE_NAME).then((cache) => cache.delete(sharedPdfUrl));

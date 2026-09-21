@@ -650,7 +650,19 @@
             } catch (error) {
                 console.error('Shared PDF error:', error);
             }
+
+            navigator.serviceWorker.ready.then((registration) => {
+                registration.active?.postMessage('get-shared-pdf');
+            });
         }
+
+        navigator.serviceWorker?.addEventListener('message', async (event) => {
+            if (event.data?.type !== 'shared-pdf' || !event.data.buffer || pdfDoc) return;
+
+            activeFileName = 'PDF yang dibagikan.pdf';
+            await renderPdfFile(new Uint8Array(event.data.buffer));
+            navigator.serviceWorker.controller?.postMessage('clear-shared-pdf');
+        });
 
         window.addEventListener('load', () => {
             navigator.serviceWorker?.ready.then(loadSharedPdf);
