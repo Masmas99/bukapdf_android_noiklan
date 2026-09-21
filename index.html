@@ -225,7 +225,7 @@
 
         <!-- PDF Viewing Area (Pinch/Touch Enabled) -->
         <main id="viewerViewport"
-            class="flex-1 pdf-touch-viewport bg-gray-200 dark:bg-slate-950 flex justify-center items-center p-4 sm:p-8 relative overflow-auto">
+            class="flex-1 pdf-touch-viewport bg-gray-200 dark:bg-slate-950 flex justify-center items-center p-2 relative overflow-auto">
 
             <!-- Welcome / Empty Mobile Screen -->
             <div id="welcomeScreen"
@@ -259,7 +259,7 @@
             </div>
 
             <!-- PDF Page Canvas Area -->
-            <div id="canvasWrapper" class="hidden flex flex-col items-center justify-center my-auto w-full max-w-5xl p-4 sm:p-8">
+            <div id="canvasWrapper" class="hidden flex flex-col items-center justify-center my-auto">
                 <canvas id="pdfMainCanvas" class="pdf-canvas-shadow rounded bg-white"></canvas>
             </div>
         </main>
@@ -430,11 +430,10 @@
                 canvasWrapper.classList.remove('hidden');
                 floatingQuickTools.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
 
-                // Adjust default mobile scale
-                calculateAutoFitScale();
+                await calculateAutoFitScale();
                 await renderSinglePage(currentPageNum);
                 generateThumbnails();
-                await saveHistoryLog(activeFileName, arrayBuffer);
+                saveHistoryLog(activeFileName);
             } catch (err) {
                 alert("Gagal membaca file PDF. Pastikan file tidak rusak!");
                 console.error(err);
@@ -442,13 +441,17 @@
             }
         }
 
-        function calculateAutoFitScale() {
-            const viewerWidth = document.getElementById('viewerViewport').clientWidth;
-            const widthRatio = window.innerWidth <= 640 ? 0.84 : 0.88;
-            const viewportWidth = viewerWidth * widthRatio;
-            pdfScale = viewportWidth / 600; // Baseline page width
-            if (pdfScale < 0.5) pdfScale = 0.5;
-            if (pdfScale > 2.0) pdfScale = 1.5;
+        async function calculateAutoFitScale() {
+            const page = await pdfDoc.getPage(currentPageNum);
+            const pageSize = page.getViewport({ scale: 1, rotation: pdfRotation });
+            const viewer = document.getElementById('viewerViewport');
+            const availableWidth = Math.max(viewer.clientWidth - 16, 1);
+            const availableHeight = Math.max(viewer.clientHeight - 16, 1);
+
+            pdfScale = Math.min(
+                availableWidth / pageSize.width,
+                availableHeight / pageSize.height
+            );
         }
 
         async function renderSinglePage(num) {
@@ -529,37 +532,13 @@
             }
         }
 
-        // Local PDF history stored locally so entries can be opened again.
-        function openHistoryDatabase() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open('docuview_history', 1);
-                request.onupgradeneeded = () => request.result.createObjectStore('files', { keyPath: 'name' });
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        async function saveHistoryLog(filename, arrayBuffer) {
+        // Local Storage History Log
+        function saveHistoryLog(filename) {
             let history = JSON.parse(localStorage.getItem('docuview_android_history') || '[]');
             history = history.filter(h => h.name !== filename);
             history.unshift({ name: filename, time: new Date().toLocaleDateString('id-ID') });
             if (history.length > 8) history.pop();
             localStorage.setItem('docuview_android_history', JSON.stringify(history));
-
-            try {
-                const database = await openHistoryDatabase();
-                await new Promise((resolve, reject) => {
-                    const transaction = database.transaction('files', 'readwrite');
-                    transaction.objectStore('files').put({
-                        name: filename,
-                        data: new Blob([arrayBuffer], { type: 'application/pdf' })
-                    });
-                    transaction.oncomplete = resolve;
-                    transaction.onerror = () => reject(transaction.error);
-                });
-            } catch (error) {
-                console.error('History storage error:', error);
-            }
             updateHistoryTab();
         }
 
@@ -567,15 +546,12 @@
             const viewHistory = document.getElementById('viewHistory');
             const history = JSON.parse(localStorage.getItem('docuview_android_history') || '[]');
 
-            if (history.length === 0) {
-                viewHistory.innerHTML = '<p class="text-xs text-gray-400 text-center py-10">Belum ada riwayat file PDF.</p>';
-                return;
-            }
+            if (history.length === 0) return;
 
             viewHistory.innerHTML = '';
             history.forEach(item => {
                 const row = document.createElement('div');
-                row.className = "p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700/40 border border-gray-200 dark:border-slate-600 flex items-center justify-between text-xs cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-600";
+                row.className = "p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700/40 border border-gray-200 dark:border-slate-600 flex items-center justify-between text-xs";
                 row.innerHTML = `
                     <div class="truncate pr-2">
                         <p class="font-bold truncate text-gray-800 dark:text-gray-200">${item.name}</p>
@@ -583,30 +559,8 @@
                     </div>
                     <i class="fa-solid fa-file-pdf text-blue-500 text-base"></i>
                 `;
-                row.addEventListener('click', () => openHistoryFile(item.name));
                 viewHistory.appendChild(row);
             });
-        }
-
-        async function openHistoryFile(filename) {
-            try {
-                const database = await openHistoryDatabase();
-                const record = await new Promise((resolve, reject) => {
-                    const request = database.transaction('files', 'readonly').objectStore('files').get(filename);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = () => reject(request.error);
-                });
-
-                if (!record) {
-                    alert('File PDF lama tidak tersedia lagi. Silakan buka ulang dari penyimpanan perangkat.');
-                    return;
-                }
-                activeFileName = record.name;
-                await renderPdfFile(new Uint8Array(await record.data.arrayBuffer()));
-                toggleDrawer(false);
-            } catch (error) {
-                console.error('History open error:', error);
-            }
         }
 
         // Event Listeners for Page Navigation
@@ -661,8 +615,7 @@
 
         // Handle File Pickers
         function processFile(file) {
-            const isPdf = file && (file.type === 'application/pdf' || /\.pdf$/i.test(file.name || ''));
-            if (isPdf) {
+            if (file && file.type === 'application/pdf') {
                 activeFileName = file.name;
                 const reader = new FileReader();
                 reader.onload = function () {
