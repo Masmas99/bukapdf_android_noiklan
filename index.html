@@ -12,24 +12,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DocuView">
-
-    <!-- PWA Manifest & Icons -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
-
-    <!-- Open Graph / Facebook / WhatsApp / Telegram -->
-    <meta property="og:title" content="DocuView - Aplikasi Pembaca PDF Android">
-    <meta property="og:description" content="Buka PDF secara kilat & offline. 100% Lokal • Ringan • Cepat">
-    <meta property="og:image" content="/assets/share.png">
-    <meta property="og:url" content="https://Masmas99.github.io/bukapdf_android_noiklan/">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="DocuView">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="DocuView - Aplikasi Pembaca PDF Android">
-    <meta name="twitter:description" content="Buka PDF secara kilat & offline. 100% Lokal • Ringan • Cepat">
-    <meta name="twitter:image" content="/assets/share.png">
+    <link rel="manifest" href="manifest.json">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -97,32 +80,11 @@
             background: rgba(156, 163, 175, 0.5);
             border-radius: 9999px;
         }
-
-        /* Install App Popup */
-        #installPopupOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 50; }
-        #installPopupOverlay.active { display: block; }
-        #installPopup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.9); background: linear-gradient(145deg, #1e293b, #0f172a); border-radius: 24px; padding: 32px 28px; max-width: 360px; width: 90%; z-index: 51; }
-        #installPopup.active { display: block; transform: translate(-50%,-50%) scale(1); }
-        #installPopup .popup-icon-wrapper { width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, #3b82f6, #60a5fa); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(59,130,246,0.4); }
-        #installPopup .popup-icon-wrapper i { font-size: 36px; color: white; }
-        #installPopup .popup-title { font-size: 20px; font-weight: 700; color: #f1f5f9; text-align: center; margin-bottom: 8px; }
-        #installPopup .popup-subtitle { font-size: 13px; color: #94a3b8; text-align: center; line-height: 1.5; margin-bottom: 24px; }
-        #installPopup .popup-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-        #installPopup .feature-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(59,130,246,0.08); border-radius: 12px; border: 1px solid rgba(59,130,246,0.1); }
-        #installPopup .feature-item i { color: #3b82f6; font-size: 14px; width: 20px; text-align: center; }
-        #installPopup .feature-item span { font-size: 12px; color: #cbd5e1; font-weight: 500; }
-        #installPopup .popup-buttons { display: flex; flex-direction: column; gap: 10px; }
-        #installPopup .btn-install { width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-weight: 700; font-size: 15px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(59,130,246,0.3); }
-        #installPopup .btn-install:active { transform: scale(0.98); }
-        #installPopup .btn-dismiss { width: 100%; padding: 12px; border-radius: 14px; background: transparent; color: #64748b; font-weight: 600; font-size: 13px; border: 1px solid rgba(100,116,139,0.3); cursor: pointer; }
-        #installPopup .popup-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); border: none; color: #64748b; cursor: pointer; font-size: 14px; }
-
-        /* Body fix */
-        body { user-select: auto; }
+    </style>
 </head>
 
 <body
-    class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-100 font-sans h-full flex flex-col overflow-hidden">
+    class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-100 font-sans h-full flex flex-col overflow-hidden select-none">
 
     <!-- Top App Bar (Android Header) -->
     <header class="bg-white dark:bg-slate-800 shadow-md px-4 py-3 flex items-center justify-between z-20 shrink-0">
@@ -182,6 +144,22 @@
             class="bg-white text-blue-700 font-bold px-3 py-1.5 rounded-full shadow-sm active:scale-95 transition text-xs">
             INSTALL
         </button>
+    </div>
+
+    <div id="installModal" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-5">
+        <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <img src="icons/icon-192.png" alt="DocuView" class="w-14 h-14 rounded-xl">
+                <div>
+                    <h2 class="font-bold text-lg text-gray-900 dark:text-white">Install DocuView</h2>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Buka PDF langsung dari Home Screen.</p>
+                </div>
+            </div>
+            <div class="flex gap-2 justify-end">
+                <button id="btnCloseInstall" class="px-4 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-300">Nanti</button>
+                <button id="btnConfirmInstall" class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-bold">Install</button>
+            </div>
+        </div>
     </div>
 
     <!-- Main Content Display -->
@@ -280,7 +258,7 @@
 
             <!-- PDF Page Canvas Area -->
             <div id="canvasWrapper" class="hidden flex flex-col items-center justify-center my-auto">
-                <canvas id="pdfMainCanvas" class="pdf-canvas-shadow rounded bg-white max-w-full"></canvas>
+                <canvas id="pdfMainCanvas" class="pdf-canvas-shadow rounded bg-white"></canvas>
             </div>
         </main>
     </div>
@@ -332,52 +310,36 @@
     </footer>
 
     <script>
-        // PWA Manifest Definition & Injection
-        const pwaManifest = {
-            "name": "DocuView Mobile PDF",
-            "short_name": "DocuView",
-            "start_url": ".",
-            "display": "standalone",
-            "orientation": "portrait",
-            "background_color": "#0f172a",
-            "theme_color": "#1e293b",
-            "description": "Android PDF Viewer Progressive Web App",
-            "icons": [
-                {
-                    "src": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
-                    "sizes": "192x192",
-                    "type": "image/png"
-                },
-                {
-                    "src": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
-                    "sizes": "512x512",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                }
-            ]
-        };
-
-        // Service Worker Registration (real file)
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then((registration) => { console.log('SW registered:', registration.scope); })
-                .catch((err) => { console.error("SW Registration error:", err); });
-        });
-    }
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .catch(err => console.error("SW Registration error:", err));
+            });
+        }
 
         // PWA Install Prompt Event
         let pwaDeferredPrompt = null;
         const pwaBanner = document.getElementById('pwaBanner');
         const btnInstallPwa = document.getElementById('btnInstallPwa');
+        const installModal = document.getElementById('installModal');
+        const btnCloseInstall = document.getElementById('btnCloseInstall');
+        const btnConfirmInstall = document.getElementById('btnConfirmInstall');
+
+        function closeInstallModal() {
+            installModal.classList.add('hidden');
+            installModal.classList.remove('flex');
+        }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             pwaDeferredPrompt = e;
             pwaBanner.classList.remove('hidden');
+            installModal.classList.remove('hidden');
+            installModal.classList.add('flex');
         });
 
-        btnInstallPwa.addEventListener('click', async () => {
+        async function installPwa() {
             if (!pwaDeferredPrompt) return;
             pwaDeferredPrompt.prompt();
             const { outcome } = await pwaDeferredPrompt.userChoice;
@@ -385,76 +347,18 @@
                 pwaBanner.classList.add('hidden');
             }
             pwaDeferredPrompt = null;
+            closeInstallModal();
+        }
+
+        btnInstallPwa.addEventListener('click', installPwa);
+        btnConfirmInstall.addEventListener('click', installPwa);
+        btnCloseInstall.addEventListener('click', closeInstallModal);
+        window.addEventListener('appinstalled', () => {
+            pwaBanner.classList.add('hidden');
+            closeInstallModal();
         });
 
-    // File Handler & Share Target
-    try {
-        if ('launchQueue' in window) {
-            launchQueue.setConsumer(async (launchParams) => {
-                if (launchParams.files && launchParams.files.length > 0) {
-                    const file = launchParams.files[0];
-                    if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-                        showLoader("Membaca File PDF...");
-                        const arrayBuffer = await file.arrayBuffer();
-                        hideLoader();
-                        renderPdfFile(new Uint8Array(arrayBuffer));
-                    }
-                }
-            });
-        }
-    } catch(e) { console.error("LaunchQueue error:", e); }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('share_target') || urlParams.has('url')) {
-        const sharedUrl = urlParams.get('url') || urlParams.get('link');
-        if (sharedUrl && sharedUrl.endsWith('.pdf')) {
-            try {
-                const response = await fetch(sharedUrl);
-                const arrayBuffer = await response.arrayBuffer();
-                renderPdfFile(new Uint8Array(arrayBuffer));
-            } catch (e) { console.error("Failed to load shared PDF:", e); }
-        }
-    }
-
-    // Install App Popup Logic
-    const installPopupOverlay = document.getElementById('installPopupOverlay');
-    const installPopup = document.getElementById('installPopup');
-    const popupCloseBtn = document.getElementById('popupCloseBtn');
-    const popupInstallBtn = document.getElementById('popupInstallBtn');
-    const popupDismissBtn = document.getElementById('popupDismissBtn');
-
-    let hasDismissedPopup = localStorage.getItem('docuview_popup_dismissed') === 'true';
-    let hasShownPopup = false;
-
-    function showInstallPopup() {
-        if (hasDismissedPopup || hasShownPopup) return;
-        hasShownPopup = true;
-        installPopupOverlay.style.display = 'block';
-        installPopup.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function hideInstallPopup() {
-        installPopupOverlay.style.display = 'none';
-        installPopup.style.display = 'none';
-        setTimeout(() => { document.body.style.overflow = ''; }, 50);
-    }
-
-    setTimeout(() => { if (!hasDismissedPopup) showInstallPopup(); }, 2000);
-
-    popupCloseBtn.addEventListener('click', () => { hideInstallPopup(); hasDismissedPopup = true; localStorage.setItem('docuview_popup_dismissed', 'true'); });
-    installPopupOverlay.addEventListener('click', () => { hideInstallPopup(); hasDismissedPopup = true; localStorage.setItem('docuview_popup_dismissed', 'true'); });
-    popupDismissBtn.addEventListener('click', () => { hideInstallPopup(); hasDismissedPopup = true; localStorage.setItem('docuview_popup_dismissed', 'true'); });
-
-    popupInstallBtn.addEventListener('click', async () => {
-        hideInstallPopup();
-        hasDismissedPopup = true;
-        localStorage.setItem('docuview_popup_dismissed', 'true');
-        if (pwaDeferredPrompt) { pwaDeferredPrompt.prompt(); const { outcome } = await pwaDeferredPrompt.userChoice; pwaDeferredPrompt = null; }
-        else { pwaBanner.classList.remove('hidden'); }
-    });
-
-    // App State Variables
+        // App State Variables
         let pdfDoc = null;
         let currentPageNum = 1;
         let isPageRendering = false;
@@ -549,13 +453,17 @@
 
             const page = await pdfDoc.getPage(num);
             const viewport = page.getViewport({ scale: pdfScale, rotation: pdfRotation });
+            const outputScale = window.devicePixelRatio || 1;
 
-            pdfCanvas.height = viewport.height;
-            pdfCanvas.width = viewport.width;
+            pdfCanvas.width = Math.floor(viewport.width * outputScale);
+            pdfCanvas.height = Math.floor(viewport.height * outputScale);
+            pdfCanvas.style.width = `${Math.floor(viewport.width)}px`;
+            pdfCanvas.style.height = `${Math.floor(viewport.height)}px`;
 
             const renderContext = {
                 canvasContext: ctx,
-                viewport: viewport
+                viewport: viewport,
+                transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null
             };
 
             await page.render(renderContext).promise;
@@ -710,6 +618,37 @@
             }
         }
 
+        if ('launchQueue' in window) {
+            window.launchQueue.setConsumer(async ({ files }) => {
+                const fileHandle = files?.[0];
+                if (!fileHandle) return;
+
+                try {
+                    processFile(await fileHandle.getFile());
+                } catch (error) {
+                    console.error('File handler error:', error);
+                }
+            });
+        }
+
+        async function loadSharedPdf() {
+            if (!('serviceWorker' in navigator)) return;
+            try {
+                const response = await fetch('./__shared_pdf__', { cache: 'no-store' });
+                if (response.ok && response.headers.get('content-type')?.includes('application/pdf')) {
+                    activeFileName = 'PDF yang dibagikan.pdf';
+                    await renderPdfFile(new Uint8Array(await response.arrayBuffer()));
+                    navigator.serviceWorker.controller?.postMessage('clear-shared-pdf');
+                }
+            } catch (error) {
+                console.error('Shared PDF error:', error);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            navigator.serviceWorker?.ready.then(loadSharedPdf);
+        });
+
         androidFileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
         welcomeFileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
 
@@ -793,24 +732,6 @@
             mobileLoader.classList.add('hidden');
         }
     </script>
-
-<!-- Install App Popup -->
-<div id="installPopupOverlay" style="display:none;"></div>
-<div id="installPopup" class="install-popup" style="display:none;">
-    <button id="popupCloseBtn" class="popup-close"><i class="fa-solid fa-xmark"></i></button>
-    <div class="popup-icon-wrapper"><i class="fa-solid fa-mobile-screen-button"></i></div>
-    <h3 class="popup-title">Instal DocuView</h3>
-    <p class="popup-subtitle">Dapatkan pengalaman membaca PDF terbaik di HP Android Anda</p>
-    <div class="popup-features">
-        <div class="feature-item"><i class="fa-solid fa-bolt"></i><span>Buka PDF secara kilat & offline</span></div>
-        <div class="feature-item"><i class="fa-solid fa-lock"></i><span>File diproses 100% lokal di HP</span></div>
-        <div class="feature-item"><i class="fa-solid fa-weight-hanging"></i><span>Aplikasi ringan & cepat</span></div>
-    </div>
-    <div class="popup-buttons">
-        <button id="popupInstallBtn" class="btn-install"><i class="fa-solid fa-download"></i> INSTALL SEKARANG</button>
-        <button id="popupDismissBtn" class="btn-dismiss">TIDAK, TERIMA KASIH</button>
-    </div>
-</div>
 </body>
 
 </html>
