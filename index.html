@@ -518,8 +518,8 @@
     </footer>
 
 <!-- Install App Popup -->
-<div id="installPopupOverlay"></div>
-<div id="installPopup" class="install-popup relative">
+<div id="installPopupOverlay" style="display:none;"></div>
+<div id="installPopup" class="install-popup relative" style="display:none;">
     <button id="popupCloseBtn" class="popup-close"><i class="fa-solid fa-xmark"></i></button>
     <div class="popup-icon-wrapper">
         <i class="fa-solid fa-mobile-screen-button"></i>
@@ -563,19 +563,21 @@
     });
 
     // File Handler & Share Target
-    if ('launchQueue' in window) {
-        launchQueue.setConsumer(async (launchParams) => {
-            if (launchParams.files && launchParams.files.length > 0) {
-                const file = launchParams.files[0];
-                if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-                    showLoader("Membaca File PDF...");
-                    const arrayBuffer = await file.arrayBuffer();
-                    hideLoader();
-                    renderPdfFile(new Uint8Array(arrayBuffer));
+    try {
+        if ('launchQueue' in window) {
+            launchQueue.setConsumer(async (launchParams) => {
+                if (launchParams.files && launchParams.files.length > 0) {
+                    const file = launchParams.files[0];
+                    if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                        showLoader("Membaca File PDF...");
+                        const arrayBuffer = await file.arrayBuffer();
+                        hideLoader();
+                        renderPdfFile(new Uint8Array(arrayBuffer));
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
+    } catch(e) { console.error("LaunchQueue error:", e); }
 
     // Share Target Handler
     const urlParams = new URLSearchParams(window.location.search);
@@ -608,6 +610,8 @@
     function showInstallPopup() {
         if (hasDismissedPopup || hasShownPopup) return;
         hasShownPopup = true;
+        installPopupOverlay.style.display = 'block';
+        installPopup.style.display = 'block';
         installPopupOverlay.classList.add('active');
         installPopup.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -616,6 +620,8 @@
     function hideInstallPopup() {
         installPopupOverlay.classList.remove('active');
         installPopup.classList.remove('active');
+        installPopupOverlay.style.display = 'none';
+        installPopup.style.display = 'none';
         setTimeout(() => { document.body.style.overflow = ''; }, 50);
     }
 
