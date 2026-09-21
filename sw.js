@@ -1,4 +1,4 @@
-const CACHE_NAME = 'docuview-android-v4';
+const CACHE_NAME = 'docuview-android-v5';
 const APP_FILES_TO_CACHE = [
     './',
     'index.html',
@@ -76,10 +76,12 @@ self.addEventListener('fetch', (event) => {
 
 async function handleSharedPdf(request) {
     const formData = await request.formData();
-    const pdf = formData.get('pdf');
+    const pdf = formData.get('pdf') || formData.get('file') || formData.get('files');
     const sharedPdfUrl = new URL('__shared_pdf__', self.registration.scope).toString();
+    const isPdf = pdf && typeof pdf.arrayBuffer === 'function' &&
+        (pdf.type === 'application/pdf' || /\.pdf$/i.test(pdf.name || ''));
 
-    if (pdf instanceof File && pdf.type === 'application/pdf') {
+    if (isPdf) {
         const cache = await caches.open(CACHE_NAME);
         await cache.put(sharedPdfUrl, new Response(pdf, {
             headers: { 'Content-Type': 'application/pdf' }
