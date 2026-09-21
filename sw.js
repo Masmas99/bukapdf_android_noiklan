@@ -7,7 +7,8 @@ const URLS_TO_CACHE = [
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
     'icons/icon-192.png',
-    'icons/icon-512.png'
+    'icons/icon-512.png',
+    'assets/share.png'
 ];
 
 self.addEventListener('install', (event) => {
