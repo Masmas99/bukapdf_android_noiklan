@@ -118,6 +118,12 @@
             pointer-events: auto;
         }
 
+        #installPopupOverlay.active::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+        }
+
         #installPopup {
             position: fixed;
             top: 50%;
@@ -139,6 +145,11 @@
             opacity: 1;
             pointer-events: auto;
             transform: translate(-50%, -50%) scale(1);
+        }
+
+        #installPopup.active .popup-features,
+        #installPopup.active .popup-buttons {
+            pointer-events: auto;
         }
 
         /* 8-state demo popup */
@@ -555,7 +566,6 @@
                     const arrayBuffer = await file.arrayBuffer();
                     hideLoader();
                     renderPdfFile(new Uint8Array(arrayBuffer));
-                    showInstallPopup();
                 }
             }
         });
@@ -600,7 +610,7 @@
     function hideInstallPopup() {
         installPopupOverlay.classList.remove('active');
         installPopup.classList.remove('active');
-        document.body.style.overflow = '';
+        setTimeout(() => { document.body.style.overflow = ''; }, 50);
     }
 
     // Auto-show popup after 2 seconds
