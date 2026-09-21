@@ -641,7 +641,7 @@
         async function loadSharedPdf() {
             if (!('serviceWorker' in navigator)) return;
             try {
-                const response = await fetch('./__shared_pdf__', { cache: 'no-store' });
+                const response = await fetch('./__shared_pdf__');
                 if (response.ok && response.headers.get('content-type')?.includes('application/pdf')) {
                     activeFileName = 'PDF yang dibagikan.pdf';
                     await renderPdfFile(new Uint8Array(await response.arrayBuffer()));
