@@ -13,25 +13,23 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DocuView">
 
-    <!-- Open Graph / Facebook / WhatsApp -->
+    <!-- PWA Manifest & Icons -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+    <!-- Open Graph / Facebook / WhatsApp / Telegram -->
     <meta property="og:title" content="DocuView - Aplikasi Pembaca PDF Android">
     <meta property="og:description" content="Buka PDF secara kilat & offline. 100% Lokal • Ringan • Cepat">
     <meta property="og:image" content="/assets/share.png">
-    <meta property="og:url" content="https://masmas99.github.io/bukapdf_android_noiklan/">
+    <meta property="og:url" content="https://Masmas99.github.io/bukapdf_android_noiklan/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="DocuView">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="DocuView - Aplikasi Pembaca PDF Android">
     <meta name="twitter:description" content="Buka PDF secara kilat & offline. 100% Lokal • Ringan • Cepat">
     <meta name="twitter:image" content="/assets/share.png">
-
-    <!-- PWA Manifest & Icons -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -69,15 +67,7 @@
         body {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
-        }
-
-        body.no-select,
-        body.no-select * {
             user-select: none;
-        }
-
-        button, .touch-active {
-            cursor: pointer;
         }
 
         .pdf-touch-viewport {
@@ -108,207 +98,31 @@
             border-radius: 9999px;
         }
 
-        /* Install App Popup Overlay */
-        #installPopupOverlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 50;
-            display: none;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
+        /* Install App Popup */
+        #installPopupOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 50; }
+        #installPopupOverlay.active { display: block; }
+        #installPopup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.9); background: linear-gradient(145deg, #1e293b, #0f172a); border-radius: 24px; padding: 32px 28px; max-width: 360px; width: 90%; z-index: 51; }
+        #installPopup.active { display: block; transform: translate(-50%,-50%) scale(1); }
+        #installPopup .popup-icon-wrapper { width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, #3b82f6, #60a5fa); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(59,130,246,0.4); }
+        #installPopup .popup-icon-wrapper i { font-size: 36px; color: white; }
+        #installPopup .popup-title { font-size: 20px; font-weight: 700; color: #f1f5f9; text-align: center; margin-bottom: 8px; }
+        #installPopup .popup-subtitle { font-size: 13px; color: #94a3b8; text-align: center; line-height: 1.5; margin-bottom: 24px; }
+        #installPopup .popup-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+        #installPopup .feature-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(59,130,246,0.08); border-radius: 12px; border: 1px solid rgba(59,130,246,0.1); }
+        #installPopup .feature-item i { color: #3b82f6; font-size: 14px; width: 20px; text-align: center; }
+        #installPopup .feature-item span { font-size: 12px; color: #cbd5e1; font-weight: 500; }
+        #installPopup .popup-buttons { display: flex; flex-direction: column; gap: 10px; }
+        #installPopup .btn-install { width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-weight: 700; font-size: 15px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(59,130,246,0.3); }
+        #installPopup .btn-install:active { transform: scale(0.98); }
+        #installPopup .btn-dismiss { width: 100%; padding: 12px; border-radius: 14px; background: transparent; color: #64748b; font-weight: 600; font-size: 13px; border: 1px solid rgba(100,116,139,0.3); cursor: pointer; }
+        #installPopup .popup-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); border: none; color: #64748b; cursor: pointer; font-size: 14px; }
 
-        #installPopupOverlay.active {
-            display: block;
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #installPopup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 24px;
-            padding: 32px 28px;
-            max-width: 360px;
-            width: 90%;
-            z-index: 51;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-        }
-
-        #installPopup.active {
-            display: block;
-            opacity: 1;
-            pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        #installPopup.active .popup-features,
-        #installPopup.active .popup-buttons {
-            pointer-events: auto;
-        }
-
-        /* 8-state demo popup */
-        .install-popup .popup-icon-wrapper {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-        }
-
-        .install-popup .popup-icon-wrapper i {
-            font-size: 36px;
-            color: white;
-        }
-
-        .install-popup .popup-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #f1f5f9;
-            text-align: center;
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
-        }
-
-        .install-popup .popup-subtitle {
-            font-size: 13px;
-            color: #94a3b8;
-            text-align: center;
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-
-        .install-popup .popup-features {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .install-popup .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            background: rgba(59, 130, 246, 0.08);
-            border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.1);
-        }
-
-        .install-popup .feature-item i {
-            color: #3b82f6;
-            font-size: 14px;
-            width: 20px;
-            text-align: center;
-        }
-
-        .install-popup .feature-item span {
-            font-size: 12px;
-            color: #cbd5e1;
-            font-weight: 500;
-        }
-
-        .install-popup .popup-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .install-popup .btn-install {
-            width: 100%;
-            padding: 14px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            font-weight: 700;
-            font-size: 15px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-        }
-
-        .install-popup .btn-install:hover {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-
-        .install-popup .btn-install:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-        }
-
-        .install-popup .btn-dismiss {
-            width: 100%;
-            padding: 12px;
-            border-radius: 14px;
-            background: transparent;
-            color: #64748b;
-            font-weight: 600;
-            font-size: 13px;
-            border: 1px solid rgba(100, 116, 139, 0.3);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .install-popup .btn-dismiss:hover {
-            background: rgba(100, 116, 139, 0.1);
-            color: #94a3b8;
-            border-color: rgba(100, 116, 139, 0.5);
-        }
-
-        .install-popup .btn-dismiss:active {
-            transform: scale(0.98);
-        }
-
-        /* Close button inside popup */
-        .install-popup .popup-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            font-size: 14px;
-        }
-
-        .install-popup .popup-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #94a3b8;
-        }
-    </style>
+        /* Body fix */
+        body { user-select: auto; }
 </head>
 
 <body
-    class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-100 font-sans h-full flex flex-col overflow-hidden select-none">
+    class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-100 font-sans h-full flex flex-col overflow-hidden">
 
     <!-- Top App Bar (Android Header) -->
     <header class="bg-white dark:bg-slate-800 shadow-md px-4 py-3 flex items-center justify-between z-20 shrink-0">
@@ -517,50 +331,61 @@
         </button>
     </footer>
 
-<!-- Install App Popup -->
-<div id="installPopupOverlay" style="display:none;"></div>
-<div id="installPopup" class="install-popup relative" style="display:none;">
-    <button id="popupCloseBtn" class="popup-close"><i class="fa-solid fa-xmark"></i></button>
-    <div class="popup-icon-wrapper">
-        <i class="fa-solid fa-mobile-screen-button"></i>
-    </div>
-    <h3 class="popup-title">Instal DocuView</h3>
-    <p class="popup-subtitle">Dapatkan pengalaman membaca PDF terbaik di HP Android Anda</p>
-    <div class="popup-features">
-        <div class="feature-item">
-            <i class="fa-solid fa-bolt"></i>
-            <span>Buka PDF secara kilat & offline</span>
-        </div>
-        <div class="feature-item">
-            <i class="fa-solid fa-lock"></i>
-            <span>File diproses 100% lokal di HP</span>
-        </div>
-        <div class="feature-item">
-            <i class="fa-solid fa-weight-hanging"></i>
-            <span>Aplikasi ringan & cepat</span>
-        </div>
-    </div>
-    <div class="popup-buttons">
-        <button id="popupInstallBtn" class="btn-install">
-            <i class="fa-solid fa-download"></i> INSTALL SEKARANG
-        </button>
-        <button id="popupDismissBtn" class="btn-dismiss">TIDAK, TERIMA KASIH</button>
-    </div>
-</div>
+    <script>
+        // PWA Manifest Definition & Injection
+        const pwaManifest = {
+            "name": "DocuView Mobile PDF",
+            "short_name": "DocuView",
+            "start_url": ".",
+            "display": "standalone",
+            "orientation": "portrait",
+            "background_color": "#0f172a",
+            "theme_color": "#1e293b",
+            "description": "Android PDF Viewer Progressive Web App",
+            "icons": [
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                }
+            ]
+        };
 
-<script>
-    // PWA Install Prompt Logic
+        // Service Worker Registration (real file)
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
-                .then((registration) => {
-                    console.log('SW registered:', registration.scope);
-                })
-                .catch((err) => {
-                    console.error("SW Registration error:", err);
-                });
+                .then((registration) => { console.log('SW registered:', registration.scope); })
+                .catch((err) => { console.error("SW Registration error:", err); });
         });
-}
+    }
+
+        // PWA Install Prompt Event
+        let pwaDeferredPrompt = null;
+        const pwaBanner = document.getElementById('pwaBanner');
+        const btnInstallPwa = document.getElementById('btnInstallPwa');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            pwaDeferredPrompt = e;
+            pwaBanner.classList.remove('hidden');
+        });
+
+        btnInstallPwa.addEventListener('click', async () => {
+            if (!pwaDeferredPrompt) return;
+            pwaDeferredPrompt.prompt();
+            const { outcome } = await pwaDeferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                pwaBanner.classList.add('hidden');
+            }
+            pwaDeferredPrompt = null;
+        });
 
     // File Handler & Share Target
     try {
@@ -579,7 +404,6 @@
         }
     } catch(e) { console.error("LaunchQueue error:", e); }
 
-    // Share Target Handler
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('share_target') || urlParams.has('url')) {
         const sharedUrl = urlParams.get('url') || urlParams.get('link');
@@ -588,9 +412,7 @@
                 const response = await fetch(sharedUrl);
                 const arrayBuffer = await response.arrayBuffer();
                 renderPdfFile(new Uint8Array(arrayBuffer));
-            } catch (e) {
-                console.error("Failed to load shared PDF:", e);
-            }
+            } catch (e) { console.error("Failed to load shared PDF:", e); }
         }
     }
 
@@ -600,10 +422,7 @@
     const popupCloseBtn = document.getElementById('popupCloseBtn');
     const popupInstallBtn = document.getElementById('popupInstallBtn');
     const popupDismissBtn = document.getElementById('popupDismissBtn');
-    const pwaBanner = document.getElementById('pwaBanner');
-    const btnInstallPwa = document.getElementById('btnInstallPwa');
 
-    let pwaDeferredPrompt = null;
     let hasDismissedPopup = localStorage.getItem('docuview_popup_dismissed') === 'true';
     let hasShownPopup = false;
 
@@ -612,411 +431,386 @@
         hasShownPopup = true;
         installPopupOverlay.style.display = 'block';
         installPopup.style.display = 'block';
-        installPopupOverlay.classList.add('active');
-        installPopup.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
     function hideInstallPopup() {
-        installPopupOverlay.classList.remove('active');
-        installPopup.classList.remove('active');
         installPopupOverlay.style.display = 'none';
         installPopup.style.display = 'none';
         setTimeout(() => { document.body.style.overflow = ''; }, 50);
     }
 
-    // Auto-show popup after 2 seconds
-    setTimeout(() => {
-        if (!hasDismissedPopup) showInstallPopup();
-    }, 2000);
+    setTimeout(() => { if (!hasDismissedPopup) showInstallPopup(); }, 2000);
 
-    popupCloseBtn.addEventListener('click', () => {
-        hideInstallPopup();
-        hasDismissedPopup = true;
-        localStorage.setItem('docuview_popup_dismissed', 'true');
-    });
-
-    installPopupOverlay.addEventListener('click', () => {
-        hideInstallPopup();
-        hasDismissedPopup = true;
-        localStorage.setItem('docuview_popup_dismissed', 'true');
-    });
-
-    popupDismissBtn.addEventListener('click', () => {
-        hideInstallPopup();
-        hasDismissedPopup = true;
-        localStorage.setItem('docuview_popup_dismissed', 'true');
-    });
+    popupCloseBtn.addEventListener('click', () => { hideInstallPopup(); hasDismissedPopup = true; localStorage.setItem('docuview_popup_dismissed', 'true'); });
+    installPopupOverlay.addEventListener('click', () => { hideInstallPopup(); hasDismissedPopup = true; localStorage.setItem('docuview_popup_dismissed', 'true'); });
+    popupDismissBtn.addEventListener('click', () => { hideInstallPopup(); hasDismissedPopup = true; localStorage.setItem('docuview_popup_dismissed', 'true'); });
 
     popupInstallBtn.addEventListener('click', async () => {
         hideInstallPopup();
         hasDismissedPopup = true;
         localStorage.setItem('docuview_popup_dismissed', 'true');
-
-        if (pwaDeferredPrompt) {
-            pwaDeferredPrompt.prompt();
-            const { outcome } = await pwaDeferredPrompt.userChoice;
-            pwaDeferredPrompt = null;
-        } else {
-            pwaBanner.classList.remove('hidden');
-        }
-    });
-
-    // PWA Install Prompt Event
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        pwaDeferredPrompt = e;
-        pwaBanner.classList.remove('hidden');
-    });
-
-    btnInstallPwa.addEventListener('click', async () => {
-        if (!pwaDeferredPrompt) return;
-        pwaDeferredPrompt.prompt();
-        const { outcome } = await pwaDeferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            pwaBanner.classList.add('hidden');
-        }
-        pwaDeferredPrompt = null;
+        if (pwaDeferredPrompt) { pwaDeferredPrompt.prompt(); const { outcome } = await pwaDeferredPrompt.userChoice; pwaDeferredPrompt = null; }
+        else { pwaBanner.classList.remove('hidden'); }
     });
 
     // App State Variables
-    let pdfDoc = null;
-    let currentPageNum = 1;
-    let isPageRendering = false;
-    let pendingPageNum = null;
-    let pdfScale = 1.0;
-    let pdfRotation = 0;
-    let activeFileName = '';
+        let pdfDoc = null;
+        let currentPageNum = 1;
+        let isPageRendering = false;
+        let pendingPageNum = null;
+        let pdfScale = 1.0;
+        let pdfRotation = 0;
+        let activeFileName = '';
 
-    // DOM Elements
-    const androidFileInput = document.getElementById('androidFileInput');
-    const welcomeFileInput = document.getElementById('welcomeFileInput');
-    const pdfCanvas = document.getElementById('pdfMainCanvas');
-    const ctx = pdfCanvas.getContext('2d');
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    const canvasWrapper = document.getElementById('canvasWrapper');
-    const mobileLoader = document.getElementById('mobileLoader');
-    const loaderStatusText = document.getElementById('loaderStatusText');
-    const btnPrevPage = document.getElementById('btnPrevPage');
-    const btnNextPage = document.getElementById('btnNextPage');
-    const inputPageNum = document.getElementById('inputPageNum');
-    const textTotalPages = document.getElementById('textTotalPages');
-    const floatingQuickTools = document.getElementById('floatingQuickTools');
+        // DOM Elements
+        const androidFileInput = document.getElementById('androidFileInput');
+        const welcomeFileInput = document.getElementById('welcomeFileInput');
+        const pdfCanvas = document.getElementById('pdfMainCanvas');
+        const ctx = pdfCanvas.getContext('2d');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const canvasWrapper = document.getElementById('canvasWrapper');
+        const mobileLoader = document.getElementById('mobileLoader');
+        const loaderStatusText = document.getElementById('loaderStatusText');
+        const btnPrevPage = document.getElementById('btnPrevPage');
+        const btnNextPage = document.getElementById('btnNextPage');
+        const inputPageNum = document.getElementById('inputPageNum');
+        const textTotalPages = document.getElementById('textTotalPages');
+        const floatingQuickTools = document.getElementById('floatingQuickTools');
 
-    // Dark Mode Logic
-    const btnThemeToggle = document.getElementById('btnThemeToggle');
-    btnThemeToggle.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        const isDark = document.documentElement.classList.contains('dark');
-        localStorage.setItem('docuview_android_theme', isDark ? 'dark' : 'light');
-    });
+        // Dark Mode Logic
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+        btnThemeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('docuview_android_theme', isDark ? 'dark' : 'light');
+        });
 
-    if (localStorage.getItem('docuview_android_theme') === 'dark' ||
-        (!('docuview_android_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-    }
-
-    // Drawer Sidebar Toggles
-    const mobileSidebar = document.getElementById('mobileSidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    const btnOpenSidebar = document.getElementById('btnOpenSidebar');
-    const btnCloseSidebar = document.getElementById('btnCloseSidebar');
-
-    function toggleDrawer(open) {
-        if (open) {
-            mobileSidebar.classList.remove('-translate-x-full');
-            sidebarOverlay.classList.remove('opacity-0', 'pointer-events-none');
-        } else {
-            mobileSidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
+        if (localStorage.getItem('docuview_android_theme') === 'dark' ||
+            (!('docuview_android_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
         }
-    }
 
-    btnOpenSidebar.addEventListener('click', () => toggleDrawer(true));
-    btnCloseSidebar.addEventListener('click', () => toggleDrawer(false));
-    sidebarOverlay.addEventListener('click', () => toggleDrawer(false));
+        // Drawer Sidebar Toggles
+        const mobileSidebar = document.getElementById('mobileSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const btnOpenSidebar = document.getElementById('btnOpenSidebar');
+        const btnCloseSidebar = document.getElementById('btnCloseSidebar');
 
-    // Load PDF File Engine
-    async function renderPdfFile(arrayBuffer) {
-        showLoader("Membaca File PDF...");
-        try {
-            pdfDoc = await pdfjsLib.getDocument(arrayBuffer).promise;
-            textTotalPages.textContent = pdfDoc.numPages;
-            inputPageNum.max = pdfDoc.numPages;
-            currentPageNum = 1;
+        function toggleDrawer(open) {
+            if (open) {
+                mobileSidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                mobileSidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
 
-            welcomeScreen.classList.add('hidden');
-            canvasWrapper.classList.remove('hidden');
-            floatingQuickTools.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
+        btnOpenSidebar.addEventListener('click', () => toggleDrawer(true));
+        btnCloseSidebar.addEventListener('click', () => toggleDrawer(false));
+        sidebarOverlay.addEventListener('click', () => toggleDrawer(false));
 
-            calculateAutoFitScale();
-            await renderSinglePage(currentPageNum);
-            generateThumbnails();
-            saveHistoryLog(activeFileName);
-        } catch (err) {
-            alert("Gagal membaca file PDF. Pastikan file tidak rusak!");
-            console.error(err);
+        // Load PDF File Engine
+        async function renderPdfFile(arrayBuffer) {
+            showLoader("Membaca File PDF...");
+            try {
+                pdfDoc = await pdfjsLib.getDocument(arrayBuffer).promise;
+                textTotalPages.textContent = pdfDoc.numPages;
+                inputPageNum.max = pdfDoc.numPages;
+                currentPageNum = 1;
+
+                welcomeScreen.classList.add('hidden');
+                canvasWrapper.classList.remove('hidden');
+                floatingQuickTools.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
+
+                // Adjust default mobile scale
+                calculateAutoFitScale();
+                await renderSinglePage(currentPageNum);
+                generateThumbnails();
+                saveHistoryLog(activeFileName);
+            } catch (err) {
+                alert("Gagal membaca file PDF. Pastikan file tidak rusak!");
+                console.error(err);
+                hideLoader();
+            }
+        }
+
+        function calculateAutoFitScale() {
+            const viewportWidth = document.getElementById('viewerViewport').clientWidth - 24;
+            pdfScale = viewportWidth / 600; // Baseline page width
+            if (pdfScale < 0.8) pdfScale = 0.8;
+            if (pdfScale > 2.0) pdfScale = 1.5;
+        }
+
+        async function renderSinglePage(num) {
+            isPageRendering = true;
+            showLoader(`Menampilkan Halaman ${num}...`);
+
+            const page = await pdfDoc.getPage(num);
+            const viewport = page.getViewport({ scale: pdfScale, rotation: pdfRotation });
+
+            pdfCanvas.height = viewport.height;
+            pdfCanvas.width = viewport.width;
+
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+
+            await page.render(renderContext).promise;
+            isPageRendering = false;
+
+            if (pendingPageNum !== null) {
+                renderSinglePage(pendingPageNum);
+                pendingPageNum = null;
+            }
+
+            inputPageNum.value = num;
+            btnPrevPage.disabled = (num <= 1);
+            btnNextPage.disabled = (num >= pdfDoc.numPages);
+
             hideLoader();
         }
-    }
 
-    function calculateAutoFitScale() {
-        const viewportWidth = document.getElementById('viewerViewport').clientWidth - 24;
-        pdfScale = viewportWidth / 600;
-        if (pdfScale < 0.8) pdfScale = 0.8;
-        if (pdfScale > 2.0) pdfScale = 1.5;
-    }
-
-    async function renderSinglePage(num) {
-        isPageRendering = true;
-        showLoader(`Menampilkan Halaman ${num}...`);
-
-        const page = await pdfDoc.getPage(num);
-        const viewport = page.getViewport({ scale: pdfScale, rotation: pdfRotation });
-
-        pdfCanvas.height = viewport.height;
-        pdfCanvas.width = viewport.width;
-
-        const renderContext = {
-            canvasContext: ctx,
-            viewport: viewport
-        };
-
-        await page.render(renderContext).promise;
-        isPageRendering = false;
-
-        if (pendingPageNum !== null) {
-            renderSinglePage(pendingPageNum);
-            pendingPageNum = null;
+        function queueRender(num) {
+            if (isPageRendering) {
+                pendingPageNum = num;
+            } else {
+                renderSinglePage(num);
+            }
         }
 
-        inputPageNum.value = num;
-        btnPrevPage.disabled = (num <= 1);
-        btnNextPage.disabled = (num >= pdfDoc.numPages);
+        // Thumbnails Generation in Sidebar
+        async function generateThumbnails() {
+            const viewThumbs = document.getElementById('viewThumbs');
+            viewThumbs.innerHTML = '';
 
-        hideLoader();
-    }
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                const page = await pdfDoc.getPage(i);
+                const viewport = page.getViewport({ scale: 0.15 });
 
-    function queueRender(num) {
-        if (isPageRendering) {
-            pendingPageNum = num;
-        } else {
-            renderSinglePage(num);
-        }
-    }
+                const card = document.createElement('div');
+                card.className = "flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 cursor-pointer touch-active";
 
-    // Thumbnails Generation in Sidebar
-    async function generateThumbnails() {
-        const viewThumbs = document.getElementById('viewThumbs');
-        viewThumbs.innerHTML = '';
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.className = "rounded shadow bg-white";
 
-        for (let i = 1; i <= pdfDoc.numPages; i++) {
-            const page = await pdfDoc.getPage(i);
-            const viewport = page.getViewport({ scale: 0.15 });
+                page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport });
 
-            const card = document.createElement('div');
-            card.className = "flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 cursor-pointer touch-active";
+                const text = document.createElement('span');
+                text.className = "text-xs font-medium text-gray-700 dark:text-gray-200";
+                text.textContent = `Halaman ${i}`;
 
-            const canvas = document.createElement('canvas');
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            canvas.className = "rounded shadow bg-white";
+                card.appendChild(canvas);
+                card.appendChild(text);
 
-            page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport });
-
-            const text = document.createElement('span');
-            text.className = "text-xs font-medium text-gray-700 dark:text-gray-200";
-            text.textContent = `Halaman ${i}`;
-
-            card.appendChild(canvas);
-            card.appendChild(text);
-
-            card.addEventListener('click', () => {
-                currentPageNum = i;
-                queueRender(currentPageNum);
-                toggleDrawer(false);
-            });
-
-            viewThumbs.appendChild(card);
-        }
-    }
-
-    // Local Storage History Log
-    function saveHistoryLog(filename) {
-        let history = JSON.parse(localStorage.getItem('docuview_android_history') || '[]');
-        history = history.filter(h => h.name !== filename);
-        history.unshift({ name: filename, time: new Date().toLocaleDateString('id-ID') });
-        if (history.length > 8) history.pop();
-        localStorage.setItem('docuview_android_history', JSON.stringify(history));
-        updateHistoryTab();
-    }
-
-    function updateHistoryTab() {
-        const viewHistory = document.getElementById('viewHistory');
-        const history = JSON.parse(localStorage.getItem('docuview_android_history') || '[]');
-
-        if (history.length === 0) return;
-
-        viewHistory.innerHTML = '';
-        history.forEach(item => {
-            const row = document.createElement('div');
-            row.className = "p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700/40 border border-gray-200 dark:border-slate-600 flex items-center justify-between text-xs";
-            row.innerHTML = `
-                <div class="truncate pr-2">
-                    <p class="font-bold truncate text-gray-800 dark:text-gray-200">${item.name}</p>
-                    <p class="text-[10px] text-gray-400">${item.time}</p>
-                </div>
-                <i class="fa-solid fa-file-pdf text-blue-500 text-base"></i>
-            `;
-            viewHistory.appendChild(row);
-        });
-    }
-
-    // Event Listeners for Page Navigation
-    btnPrevPage.addEventListener('click', () => {
-        if (currentPageNum > 1) {
-            currentPageNum--;
-            queueRender(currentPageNum);
-        }
-    });
-
-    btnNextPage.addEventListener('click', () => {
-        if (currentPageNum < pdfDoc.numPages) {
-            currentPageNum++;
-            queueRender(currentPageNum);
-        }
-    });
-
-    inputPageNum.addEventListener('change', (e) => {
-        const page = parseInt(e.target.value);
-        if (page >= 1 && page <= pdfDoc.numPages) {
-            currentPageNum = page;
-            queueRender(currentPageNum);
-        }
-    });
-
-    // Floating Action Controls (Zoom/Rotate)
-    document.getElementById('btnZoomIn').addEventListener('click', () => {
-        pdfScale += 0.2;
-        queueRender(currentPageNum);
-    });
-
-    document.getElementById('btnZoomOut').addEventListener('click', () => {
-        if (pdfScale > 0.4) {
-            pdfScale -= 0.2;
-            queueRender(currentPageNum);
-        }
-    });
-
-    document.getElementById('btnRotatePage').addEventListener('click', () => {
-        pdfRotation = (pdfRotation + 90) % 360;
-        queueRender(currentPageNum);
-    });
-
-    // Android Fullscreen Engine Trigger
-    document.getElementById('btnFullscreen').addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => console.log(err));
-        } else {
-            document.exitFullscreen();
-        }
-    });
-
-    // Handle File Pickers
-    function processFile(file) {
-        if (file && file.type === 'application/pdf') {
-            activeFileName = file.name;
-            const reader = new FileReader();
-            reader.onload = function () {
-                renderPdfFile(new Uint8Array(this.result));
-            };
-            reader.readAsArrayBuffer(file);
-        }
-    }
-
-    androidFileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
-    welcomeFileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
-
-    // Tab Navigation inside Drawer Sidebar
-    const tabThumbs = document.getElementById('tabThumbs');
-    const tabSearch = document.getElementById('tabSearch');
-    const tabHistory = document.getElementById('tabHistory');
-
-    const viewThumbs = document.getElementById('viewThumbs');
-    const viewSearch = document.getElementById('viewSearch');
-    const viewHistory = document.getElementById('viewHistory');
-
-    tabThumbs.addEventListener('click', () => {
-        viewThumbs.classList.remove('hidden');
-        viewSearch.classList.add('hidden');
-        viewHistory.classList.add('hidden');
-        tabThumbs.className = "flex-1 py-3 text-center border-b-2 border-blue-600 text-blue-600 dark:text-blue-400";
-        tabSearch.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
-        tabHistory.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
-    });
-
-    tabSearch.addEventListener('click', () => {
-        viewSearch.classList.remove('hidden');
-        viewThumbs.classList.add('hidden');
-        viewHistory.classList.add('hidden');
-        tabSearch.className = "flex-1 py-3 text-center border-b-2 border-blue-600 text-blue-600 dark:text-blue-400";
-        tabThumbs.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
-        tabHistory.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
-    });
-
-    tabHistory.addEventListener('click', () => {
-        viewHistory.classList.remove('hidden');
-        viewThumbs.classList.add('hidden');
-        viewSearch.classList.add('hidden');
-        tabHistory.className = "flex-1 py-3 text-center border-b-2 border-blue-600 text-blue-600 dark:text-blue-400";
-        tabThumbs.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
-        tabSearch.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
-        updateHistoryTab();
-    });
-
-    // Search Engine Implementation
-    document.getElementById('btnExecSearch').addEventListener('click', async () => {
-        const query = document.getElementById('androidSearchInput').value.trim();
-        const resultsList = document.getElementById('searchResultsList');
-        resultsList.innerHTML = '';
-
-        if (!pdfDoc || !query) return;
-
-        showLoader("Mencari teks...");
-        for (let i = 1; i <= pdfDoc.numPages; i++) {
-            const page = await pdfDoc.getPage(i);
-            const textContent = await page.getTextContent();
-            const str = textContent.items.map(item => item.str).join(' ');
-
-            if (str.toLowerCase().includes(query.toLowerCase())) {
-                const item = document.createElement('div');
-                item.className = "p-2 rounded bg-gray-100 dark:bg-slate-700/50 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-600";
-                item.innerHTML = `<span class="font-bold text-blue-600">Halaman ${i}:</span> Teks ditemukan`;
-                item.addEventListener('click', () => {
+                card.addEventListener('click', () => {
                     currentPageNum = i;
                     queueRender(currentPageNum);
                     toggleDrawer(false);
                 });
-                resultsList.appendChild(item);
+
+                viewThumbs.appendChild(card);
             }
         }
-        hideLoader();
 
-        if (resultsList.children.length === 0) {
-            resultsList.innerHTML = `<p class="text-gray-400">Teks "${query}" tidak ditemukan.</p>`;
+        // Local Storage History Log
+        function saveHistoryLog(filename) {
+            let history = JSON.parse(localStorage.getItem('docuview_android_history') || '[]');
+            history = history.filter(h => h.name !== filename);
+            history.unshift({ name: filename, time: new Date().toLocaleDateString('id-ID') });
+            if (history.length > 8) history.pop();
+            localStorage.setItem('docuview_android_history', JSON.stringify(history));
+            updateHistoryTab();
         }
-    });
 
-    // Helper Loaders
-    function showLoader(msg) {
-        loaderStatusText.textContent = msg;
-        mobileLoader.classList.remove('hidden');
-    }
+        function updateHistoryTab() {
+            const viewHistory = document.getElementById('viewHistory');
+            const history = JSON.parse(localStorage.getItem('docuview_android_history') || '[]');
 
-    function hideLoader() {
-        mobileLoader.classList.add('hidden');
-    }
-</script>
+            if (history.length === 0) return;
+
+            viewHistory.innerHTML = '';
+            history.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700/40 border border-gray-200 dark:border-slate-600 flex items-center justify-between text-xs";
+                row.innerHTML = `
+                    <div class="truncate pr-2">
+                        <p class="font-bold truncate text-gray-800 dark:text-gray-200">${item.name}</p>
+                        <p class="text-[10px] text-gray-400">${item.time}</p>
+                    </div>
+                    <i class="fa-solid fa-file-pdf text-blue-500 text-base"></i>
+                `;
+                viewHistory.appendChild(row);
+            });
+        }
+
+        // Event Listeners for Page Navigation
+        btnPrevPage.addEventListener('click', () => {
+            if (currentPageNum > 1) {
+                currentPageNum--;
+                queueRender(currentPageNum);
+            }
+        });
+
+        btnNextPage.addEventListener('click', () => {
+            if (currentPageNum < pdfDoc.numPages) {
+                currentPageNum++;
+                queueRender(currentPageNum);
+            }
+        });
+
+        inputPageNum.addEventListener('change', (e) => {
+            const page = parseInt(e.target.value);
+            if (page >= 1 && page <= pdfDoc.numPages) {
+                currentPageNum = page;
+                queueRender(currentPageNum);
+            }
+        });
+
+        // Floating Action Controls (Zoom/Rotate)
+        document.getElementById('btnZoomIn').addEventListener('click', () => {
+            pdfScale += 0.2;
+            queueRender(currentPageNum);
+        });
+
+        document.getElementById('btnZoomOut').addEventListener('click', () => {
+            if (pdfScale > 0.4) {
+                pdfScale -= 0.2;
+                queueRender(currentPageNum);
+            }
+        });
+
+        document.getElementById('btnRotatePage').addEventListener('click', () => {
+            pdfRotation = (pdfRotation + 90) % 360;
+            queueRender(currentPageNum);
+        });
+
+        // Android Fullscreen Engine Trigger
+        document.getElementById('btnFullscreen').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Handle File Pickers
+        function processFile(file) {
+            if (file && file.type === 'application/pdf') {
+                activeFileName = file.name;
+                const reader = new FileReader();
+                reader.onload = function () {
+                    renderPdfFile(new Uint8Array(this.result));
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        androidFileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
+        welcomeFileInput.addEventListener('change', (e) => processFile(e.target.files[0]));
+
+        // Tab Navigation inside Drawer Sidebar
+        const tabThumbs = document.getElementById('tabThumbs');
+        const tabSearch = document.getElementById('tabSearch');
+        const tabHistory = document.getElementById('tabHistory');
+
+        const viewThumbs = document.getElementById('viewThumbs');
+        const viewSearch = document.getElementById('viewSearch');
+        const viewHistory = document.getElementById('viewHistory');
+
+        tabThumbs.addEventListener('click', () => {
+            viewThumbs.classList.remove('hidden');
+            viewSearch.classList.add('hidden');
+            viewHistory.classList.add('hidden');
+            tabThumbs.className = "flex-1 py-3 text-center border-b-2 border-blue-600 text-blue-600 dark:text-blue-400";
+            tabSearch.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
+            tabHistory.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
+        });
+
+        tabSearch.addEventListener('click', () => {
+            viewSearch.classList.remove('hidden');
+            viewThumbs.classList.add('hidden');
+            viewHistory.classList.add('hidden');
+            tabSearch.className = "flex-1 py-3 text-center border-b-2 border-blue-600 text-blue-600 dark:text-blue-400";
+            tabThumbs.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
+            tabHistory.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
+        });
+
+        tabHistory.addEventListener('click', () => {
+            viewHistory.classList.remove('hidden');
+            viewThumbs.classList.add('hidden');
+            viewSearch.classList.add('hidden');
+            tabHistory.className = "flex-1 py-3 text-center border-b-2 border-blue-600 text-blue-600 dark:text-blue-400";
+            tabThumbs.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
+            tabSearch.className = "flex-1 py-3 text-center text-gray-500 dark:text-gray-400";
+            updateHistoryTab();
+        });
+
+        // Search Engine Implementation
+        document.getElementById('btnExecSearch').addEventListener('click', async () => {
+            const query = document.getElementById('androidSearchInput').value.trim();
+            const resultsList = document.getElementById('searchResultsList');
+            resultsList.innerHTML = '';
+
+            if (!pdfDoc || !query) return;
+
+            showLoader("Mencari teks...");
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                const page = await pdfDoc.getPage(i);
+                const textContent = await page.getTextContent();
+                const str = textContent.items.map(item => item.str).join(' ');
+
+                if (str.toLowerCase().includes(query.toLowerCase())) {
+                    const item = document.createElement('div');
+                    item.className = "p-2 rounded bg-gray-100 dark:bg-slate-700/50 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-600";
+                    item.innerHTML = `<span class="font-bold text-blue-600">Halaman ${i}:</span> Teks ditemukan`;
+                    item.addEventListener('click', () => {
+                        currentPageNum = i;
+                        queueRender(currentPageNum);
+                        toggleDrawer(false);
+                    });
+                    resultsList.appendChild(item);
+                }
+            }
+            hideLoader();
+
+            if (resultsList.children.length === 0) {
+                resultsList.innerHTML = `<p class="text-gray-400">Teks "${query}" tidak ditemukan.</p>`;
+            }
+        });
+
+        // Helper Loaders
+        function showLoader(msg) {
+            loaderStatusText.textContent = msg;
+            mobileLoader.classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            mobileLoader.classList.add('hidden');
+        }
+    </script>
+
+<!-- Install App Popup -->
+<div id="installPopupOverlay" style="display:none;"></div>
+<div id="installPopup" class="install-popup" style="display:none;">
+    <button id="popupCloseBtn" class="popup-close"><i class="fa-solid fa-xmark"></i></button>
+    <div class="popup-icon-wrapper"><i class="fa-solid fa-mobile-screen-button"></i></div>
+    <h3 class="popup-title">Instal DocuView</h3>
+    <p class="popup-subtitle">Dapatkan pengalaman membaca PDF terbaik di HP Android Anda</p>
+    <div class="popup-features">
+        <div class="feature-item"><i class="fa-solid fa-bolt"></i><span>Buka PDF secara kilat & offline</span></div>
+        <div class="feature-item"><i class="fa-solid fa-lock"></i><span>File diproses 100% lokal di HP</span></div>
+        <div class="feature-item"><i class="fa-solid fa-weight-hanging"></i><span>Aplikasi ringan & cepat</span></div>
+    </div>
+    <div class="popup-buttons">
+        <button id="popupInstallBtn" class="btn-install"><i class="fa-solid fa-download"></i> INSTALL SEKARANG</button>
+        <button id="popupDismissBtn" class="btn-dismiss">TIDAK, TERIMA KASIH</button>
+    </div>
+</div>
 </body>
 
 </html>
