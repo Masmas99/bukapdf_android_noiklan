@@ -1,0 +1,8 @@
+{
+  "appId": "com.masmas99.docuview",
+  "appName": "DocuView",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
