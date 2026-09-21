@@ -1,9 +1,9 @@
-const CACHE_NAME = 'docuview-android-v8';
+const CACHE_NAME = 'docuview-android-v9';
 const APP_FILES_TO_CACHE = [
     './',
     'index.html',
     'manifest.json',
-    'sw.js?v=8',
+    'sw.js?v=9',
     'icons/icon-192.png',
     'icons/icon-512.png',
     'assets/share.png'
@@ -93,8 +93,7 @@ self.addEventListener('fetch', (event) => {
 async function handleSharedPdf(request) {
     const formData = await request.formData();
     const sharedFiles = [...formData.values()];
-    const pdf = sharedFiles.find((file) => file && typeof file.arrayBuffer === 'function' &&
-        (/\.pdf$/i.test(file.name || '') || file.type === 'application/pdf' || file.type === 'application/octet-stream'));
+    const pdf = sharedFiles.find((file) => file && typeof file.arrayBuffer === 'function');
     const sharedPdfUrl = new URL('__shared_pdf__', self.registration.scope).toString();
     const isPdf = Boolean(pdf);
 
