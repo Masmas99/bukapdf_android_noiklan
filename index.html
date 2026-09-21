@@ -69,7 +69,15 @@
         body {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        body.no-select,
+        body.no-select * {
             user-select: none;
+        }
+
+        button, .touch-active {
+            cursor: pointer;
         }
 
         .pdf-touch-viewport {
@@ -109,19 +117,15 @@
             -webkit-backdrop-filter: blur(8px);
             z-index: 50;
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         #installPopupOverlay.active {
             opacity: 1;
+            visibility: visible;
             pointer-events: auto;
-        }
-
-        #installPopupOverlay.active::after {
-            content: '';
-            position: absolute;
-            inset: 0;
         }
 
         #installPopup {
