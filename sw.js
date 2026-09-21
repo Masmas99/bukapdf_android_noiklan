@@ -1,9 +1,9 @@
-const CACHE_NAME = 'docuview-android-v6';
+const CACHE_NAME = 'docuview-android-v7';
 const APP_FILES_TO_CACHE = [
     './',
     'index.html',
     'manifest.json',
-    'sw.js',
+    'sw.js?v=7',
     'icons/icon-192.png',
     'icons/icon-512.png',
     'assets/share.png'

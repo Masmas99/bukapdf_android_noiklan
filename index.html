@@ -315,7 +315,7 @@
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('./sw.js?v=7')
                     .catch(err => console.error("SW Registration error:", err));
             });
         }
