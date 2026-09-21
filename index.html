@@ -543,6 +543,37 @@
                     console.error("SW Registration error:", err);
                 });
         });
+    });
+
+    // File Handler & Share Target
+    if ('launchQueue' in window) {
+        launchQueue.setConsumer(async (launchParams) => {
+            if (launchParams.files && launchParams.files.length > 0) {
+                const file = launchParams.files[0];
+                if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                    showLoader("Membaca File PDF...");
+                    const arrayBuffer = await file.arrayBuffer();
+                    hideLoader();
+                    renderPdfFile(new Uint8Array(arrayBuffer));
+                    showInstallPopup();
+                }
+            }
+        });
+    }
+
+    // Share Target Handler
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('share_target') || urlParams.has('url')) {
+        const sharedUrl = urlParams.get('url') || urlParams.get('link');
+        if (sharedUrl && sharedUrl.endsWith('.pdf')) {
+            try {
+                const response = await fetch(sharedUrl);
+                const arrayBuffer = await response.arrayBuffer();
+                renderPdfFile(new Uint8Array(arrayBuffer));
+            } catch (e) {
+                console.error("Failed to load shared PDF:", e);
+            }
+        }
     }
 
     // Install App Popup Logic
